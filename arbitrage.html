@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+<!--
+	Forty by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Exploring Arbitrage Opportunities in Cryptocurrency Liquidity Pools</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+				<!-- Note: The "styleN" class below should match that of the banner element. -->
+					<header id="header" class="alt style2">
+						<nav>
+							<a href="#menu">Menu</a>
+						</nav>
+					</header>
+
+				<!-- Menu -->
+					<nav id="menu">
+						<ul class="links">
+							<li><a href="index.html">Home</a></li>
+							<li><a href="generic.html">About me</a></li>
+						</ul>
+					</nav>
+
+				<!-- Banner -->
+				<!-- Note: The "styleN" class below should match that of the header element. -->
+					<section id="banner" class="style2">
+						<div class="inner">
+							<span class="image">
+								<img src="images/pic07.jpg" alt="" />
+							</span>
+							<header class="major">
+								<h1>Exploring Arbitrage Opportunities in Cryptocurrency Liquidity Pools</h1>
+							</header>
+						</div>
+					</section>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- One -->
+							<section id="one">
+								<div class="inner">
+									<header class="major">
+										<h2>Overview</h2>
+									</header>
+									<p>Our Capstone project focuses on predicting arbitrage opportunities in time series liquidity pool transactions. Our tool enables cryptocurrency traders to make smarter decisions, optimize their strategies, and increase returns. By providing accurate predictions, traders can better navigate the volatile crypto market and maximize their profitability. We analyze transaction data from Ethereum-based liquidity pools using advanced machine learning models, including an LGBM model and XG Boost. Our approach involves predicting percent differences in currencies, incorporating external factors like global market prices and transaction fees to enhance prediction accuracy. We seek support through access to more data sources, mentorship from industry experts, and partnerships with crypto trading platforms to refine and validate our tool. Your collaboration will help us bring this innovative solution to the market and revolutionize how traders engage with liquidity pools.</p>
+								</div>
+							</section>
+
+						<!-- Two -->
+							<section id="two" class="spotlights">
+								<section>
+									<a href="generic.html" class="image">
+										<img src="images/Dataset and Modeling.jpg" alt="" data-position="center center" />
+									</a>
+									<div class="content">
+										<div class="inner">
+											<header class="major">
+												<h3>Dataset and Modeling</h3>
+											</header>
+											<p>Arbitrage Equation: <br />
+
+												Net Gain = A(1+ΔP)(1-T2) - A(1-T2) - G </p>
+												
+											<p>	A is the amount invested<br />
+												A(1+ΔP) is the value obtained after arbitrage<br />
+												T1 and T2 are the transaction fees (constant, based on the pool providers)<br />
+												G is the gas fees (computational cost of doing a transaction on the blockchain)</p>
+											<p>	The type of arbitrage that we are looking at is where we buy a token at a lower price in one pool and sell it for a higher price in the other pool. To have a net gain we first need an amount that we are willing to invest. Theoretically we will be making this amount back and capturing the difference in the pricing between the two pools. So A times the 1 plus the change in percentage will be the value we obtain after the arbitrage opportunity. Next we need to subtract the transaction fees that are incurred for trading in the two pools as well as the Gas fees. This results in us getting the Net Gain. To get the minimum amount we need to invest we set our net gain equal to zero and solve for A.</p>
+												
+											<p>	Minimum Amount to Invest:<br />
+												
+												A = G/((1+ΔP)(1-T2) - (1-T2))</p>
+												
+											<p>	Here we see that gas prices and the percent change are the only variables that vary per transaction and these will be what we predict in our modeling.</p>
+												
+											<p>	Our data was sourced from Uniswap V3 data that was hosted on the Graph. The data was collated by querying the Graph API for two specific WETH/USDC liquidity pools. The queries returned transactional data from each of the pools which we needed to process and marry based on the timestamps of each transaction. As such these pools needed to have a relatively high volume of transactions to ensure that we get transactions that were close to one another. Once records of transactions that occurred close enough to one another were obtained we could calculate the percent difference between the prices of the WETH coin in both liquidity pools as well as the total gas fees from each transaction.
+												
+												In our modeling approach we experimented with a variety of ways to put our data together. Initially we had went to source various data types that we thought would help in predicting a large differences in prices between two pools. However, through our eda and modeling we quickly discovered that the other features were clouding the model’s judgement and creating a lot of noise. The features that helped our model performance the most were the various lags, means moving averages of the target variable. 
+												
+												In our initial approach where we just slid our target variable back by 5 minutes. Our random forest, linear regression and xgb boosts used this approach. In our LGBM model we experimented with a different approach. First we took the mean at each minute interval. Then we lagged the mean and then slid our target variable back by 5 minutes. This helped the performance of our LGBM by smoothing the data that it was predicting. For our LSTM model, we followed a windowing approach. We start with our target variable and find the entry that is exactly 5 minutes prior. Then we take the lags at a set frequency to make up the entries that will help predict our target variable. When you stack these you then get a dataset. We experimented with different frequencies of the lags and the amount of time before prior to the target variable.</p>
+										</div>
+									</div>
+								</section>
+								<section>
+									<a href="generic.html" class="image">
+										<img src="images/EDC-Evaluation-Full.png" alt="" data-position="top center" />
+									</a>
+									<div class="content">
+										<div class="inner">
+											<header class="major">
+												<h3> Evaluation</h3>
+											</header>
+											<p><span>To predict the percent change, we explored various models. We scored our models based on the RMSE (Root Mean Squared Error) and the R<sup>2</sup> (wellness of fit).&nbsp;</span></p>
+											<table><tbody><tr><td><p dir="ltr"><strong>Type</strong></p></td><td><p dir="ltr"><strong>RMSE (% Change)</strong></p></td><td><p dir="ltr"><strong>R<sup>2</sup></strong></p></td></tr><tr><td><p dir="ltr"><span>Random Forest</span></p></td><td><p dir="ltr"><span>0.00127</span></p></td><td><p dir="ltr"><span>0.375</span></p></td></tr><tr><td><p dir="ltr"><span>XGBoost</span></p></td><td><p dir="ltr"><span>0.00134</span></p></td><td><p dir="ltr"><span>0.421</span></p></td></tr><tr><td><p dir="ltr"><span>Linear (Baseline)</span></p></td><td><p dir="ltr"><span>0.00105</span></p></td><td><p dir="ltr"><span>0.573</span></p></td></tr><tr><td><p dir="ltr"><span>LSTM</span></p></td><td><p dir="ltr"><span>0.000963</span></p></td><td><p dir="ltr"><span>0.598</span></p></td></tr><tr><td><p dir="ltr"><span>LGBM</span></p></td><td><p dir="ltr"><span>0.000949</span></p></td><td><p dir="ltr"><span>0.646</span></p></td></tr></tbody></table>
+											<p><span>Our baseline was the linear regression model which performed surprisingly well. We tuned the hyperparameters of our better performing models to ensure we were getting the best performance from these. We explored tree based models like random forest, xgboost and LGBMs. The LGBM was by far the better performing tree based model. This makes sense as in its approach it grows the leafs that maximize the loss, which in turn allows this model to predict more accurately than a random forest or xgboost which grows the trees level wise. The LSTM was a close second and it’s architecture of windows works rather well at time series problems.</span>&nbsp;</p>
+											<p dir="ltr"><span>Next we predicted the gas prices. The gas price is the computational cost of doing a transaction on the blockchain. We observed that the actual gas had sudden spikes all throughout the days. This could be due to various factors such as spikes in demand, miner behavior, network congestion in the blockchain and so on. However, when the gas prices are relatively constant, we see that the models are performing well. Due to the spikes, we saw the R<sup>2 </sup>suffer across the board.</span></p>
+											<table><tbody><tr><td><p dir="ltr"><strong>Type</strong></p></td><td><p dir="ltr"><strong>RMSE (total gas price)</strong></p></td><td><p dir="ltr"><strong>R<sup>2</sup></strong></p></td></tr><tr><td><p dir="ltr"><span>Linear (Baseline)</span></p></td><td><p dir="ltr"><span>48613</span></p></td><td><p dir="ltr"><span>-0.015</span></p></td></tr><tr><td><p dir="ltr"><span>LSTM</span></p></td><td><p dir="ltr"><span>145.17</span></p></td><td><p dir="ltr"><span>0.112</span></p></td></tr><tr><td><p dir="ltr"><span>LGBM</span></p></td><td><p dir="ltr"><span>266.39</span></p></td><td><p dir="ltr"><span>0.170</span></p></td></tr><tr><td><p dir="ltr"><span>XGBoost</span></p></td><td><p dir="ltr"><span>266.36</span></p></td><td><p dir="ltr"><span>0.171</span></p></td></tr></tbody></table>
+											<p dir="ltr"><span>We kept our linear regression as our baseline. We had to retune the hyperparameters for these models to be able to predict the gas fees. Our best performing model was the XGboost model, we see it outperforming the LGBM this time around. This is likely due to the LGBM overfitting the training data and we observed cases of this where the model predicted consistently higher than the actual gas fee and there were also instances where it attempts to predict these spikes.</span></p>
+										</div>
+									</div>
+								</section>
+								<section>
+									<a href="generic.html" class="image">
+										<img src="images/engineer technical challenges.png.avif" alt="" data-position="25% 25%" />
+									</a>
+									<div class="content">
+										<div class="inner">
+											<header class="major">
+												<h3>Impact and Technical Challenges</h3>
+											</header>
+											<p dir="ltr"><span>Putting the predictions of the gas fees and the percentage change together we are able to find the minimum amount that we should invest. Using the actual percent change and gas fees during that time we are able to see what our returns. Our strategy here is the invest at every opportunity where the model predicts a positive amount that is within a specified budget. From our test runs we observed what our returns would be using this investment strategy at different budgets. We saw that at a budget of 6000 if we invest using this strategy we can make a return of 8000. However on the flip side if we had a high enough budget around 10,000 dollars we could potentially lose over 3 million dollars. This is a trend that we have seen consistently that at higher amount of investments there is a potentially large downside.&nbsp;</span></p>
+											<p dir="ltr"><span>Our deep dive into the world of decentralized finance faced 3 major technical challenges</span></p>
+											<p dir="ltr"><span>Firstly, identifying and executing arbitrage opportunities for profit consistently is really difficult. we're dealing with an incredibly challenging arena. Cross-liquidity pool arbitrage opportunities are scarce, as the market is saturated with professional institutions who have significant advantages in terms of computing power, speed and investment size. Moreover, predicting slippage and gas prices accurately is also very difficult, making it difficult to gauge true profitability.</span></p>
+											<p dir="ltr"><span>The second challenge revolves around the complexity of blockchain data. While it is all open and freely available, parsing raw blockchain data efficiently without expensive premium tools isn’t easy - there are a lot of data startups in the space working to solve for this but their premium tools are expensive, putting retail traders at a disadvantage when trying to identify opportunities quickly.</span></p>
+											<p dir="ltr"><span>Lastly, we must contend with Ethereum's 'dark forest' nature. All transactions made on the blockchain are visible in the mempool before confirmation, leaving them exposed. This means anyone can potentially front-run your swap, trade or order, and in our case stealing our arbitrage opportunity. MEV is basically when clever traders (or even more clever bots and algorithms) make money by frontrunning you in the split second before your crypto trade goes through. The presence of these types of bots make it hard&nbsp;to compete without institutional grade hardware and data&nbsp;</span></p>
+										</div>
+									</div>
+								</section>
+							</section>
+
+						<!-- Three -->
+							<section id="three">
+								<div class="inner">
+									<header class="major">
+										<h2>Repositories and Links</h2>
+									</header>
+									<ul class="actions">
+										<li><a href="https://arbitrageplaygroudv2-eyfnm7cbaba4fxayxjabyh.streamlit.app" class="button next" target="_blank">Arbitrage Playground(Streamlit App)</a></li>
+									</ul>
+									<ul class="actions">
+										<li><a href="https://mydiamondhands.io" class="button next" target="_blank">Project Website</a></li>
+									</ul>
+									<ul class="actions">
+										<li><a href="https://docs.google.com/presentation/d/1IpV1YeuyLYVnBb1bzMAvOJnMV2EHAk-9XFYwx1bXeWc/edit#slide=id.gc6f980f91_0_0" class="button next" target="_blank">Presentation</a></li>
+									</ul>
+									<ul class="actions">
+										<li><a href="https://github.com/derek-dewald/DATASCI210.git" class="button next" target="_blank">Dataset Repo</a></li>
+									</ul>
+									<ul class="actions">
+										<li><a href="https://drive.google.com/drive/folders/15swOvEZjMO4WO47e7w2gmfPs3tQPB1NU?usp=share_link" class="button next" target="_blank">Modeling Docs Folder</a></li>
+									</ul>
+									<ul class="actions">
+										<li><a href="https://github.com/shirshikartejas/arbitrage_playgroud_v2.git" class="button next" target="_blank">Streamlit Repo</a></li>
+									</ul>
+									
+								</div>
+							</section>
+
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
